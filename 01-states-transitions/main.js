@@ -10,7 +10,31 @@ import { inspect } from '@xstate/inspect';
 //   url: 'https://stately.ai/viz?inspect',
 // });
 
-const playerMachine = createMachine({});
+const playerMachine = createMachine({
+  initial: 'loading',
+  states: {
+    loading: {
+      on: {
+//        LOADED: {
+//          target: 'playing',
+//        },
+        LOADED: 'playing',
+      }
+    },
+    playing: {
+      on: {
+        PAUSE: 'paused',
+      }
+    },
+    paused: {
+      on: {
+        PLAY: {
+          target: 'playing',
+        }
+      }
+    }
+  }
+});
 
 const service = interpret(playerMachine, { devTools: true }).start();
 
@@ -29,3 +53,5 @@ service.subscribe((state) => {
 });
 
 service.send({ type: 'LOADED' });
+
+window.service = service;
